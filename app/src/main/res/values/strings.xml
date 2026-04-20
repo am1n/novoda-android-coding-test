@@ -3,5 +3,6 @@
     <string name="state_empty_title">No items to display</string>
     <string name="state_error_title">An error occurred</string>
     <string name="button_follow">Follow</string>
+    <string name="button_unfollow">Unfollow</string>
     <string name="reputation_format">Reputation: %s</string>
 </resources>

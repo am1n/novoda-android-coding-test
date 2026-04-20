@@ -94,14 +94,17 @@ fun MainScreenRoute(
     MainScreen(
         modifier = modifier,
         uiState = uiState.value
-    )
+    ) { user ->
+        viewModel.triggerUserFollowed(user)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainScreen(
     modifier: Modifier = Modifier,
-    uiState: MainScreenUiState
+    uiState: MainScreenUiState,
+    onFollowClick: ((User) -> Unit)? = null
 ) {
     when (uiState) {
         MainScreenUiState.Empty -> {
@@ -132,7 +135,8 @@ private fun MainScreen(
                 items(uiState.users) { user ->
                     UserItem(
                         modifier = Modifier.fillMaxWidth(),
-                        user = user
+                        user = user,
+                        onFollowClick = onFollowClick
                     )
                 }
             }
@@ -143,17 +147,20 @@ private fun MainScreen(
 @Composable
 private fun UserItem(
     modifier: Modifier = Modifier,
-    user: User
+    user: User,
+    onFollowClick: ((User) -> Unit)? = null
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier
+            .background(if (user.followed) Color.DarkGray else Color.Transparent)
+            .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         AsyncImage(
             modifier = Modifier
                 .size(80.dp)
-                .background(Color.Red),
+                .background(Color.Gray),
             model = user.imageUrl,
             contentDescription = null,
         )
@@ -164,8 +171,9 @@ private fun UserItem(
             Text(user.name, fontWeight = FontWeight.Bold)
             Text(stringResource(R.string.reputation_format, user.reputation.formattedReputation()))
         }
-        Button(onClick = {}) {
-            Text(text = stringResource(R.string.button_follow))
+        Button(onClick = { onFollowClick?.invoke(user) }) {
+            val label = if (user.followed) R.string.button_unfollow else R.string.button_follow
+            Text(text = stringResource(label))
         }
     }
 }
