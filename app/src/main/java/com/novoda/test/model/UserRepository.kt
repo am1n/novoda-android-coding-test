@@ -2,25 +2,21 @@ package com.novoda.test.model
 
 import javax.inject.Inject
 
-class UserRepository @Inject constructor() {
+class UserRepository @Inject constructor(
+    private val stackOverflowService: StackOverflowService
+) {
 
     suspend fun getUsers(): List<User> {
-        val users = listOf(
+        val userResultsJson = stackOverflowService.getUsers()
+        val users = userResultsJson.items.map {
             User(
-                id = 1,
-                name = "Example User",
-                reputation = 5,
-                imageUrl = "https://www.gravatar.com/avatar/a007be5a61f6aa8f3e85ae2fc18dd66e?d=identicon&r=PG",
-                followed = false
-            ),
-            User(
-                id = 2,
-                name = "Example User 2",
-                reputation = 7,
-                imageUrl = "https://www.gravatar.com/avatar/a007be5a61f6aa8f3e85ae2fc18dd66e?d=identicon&r=PG",
-                followed = true
+                id = it.userId,
+                name = it.displayName,
+                reputation = it.reputation,
+                imageUrl = it.profileImage,
+                followed = false // TODO: get followed status correctly
             )
-        )
+        }
         return users
     }
 }
