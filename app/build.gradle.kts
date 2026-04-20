@@ -57,6 +57,12 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
 
+    // Unit Testing - JUnit, Robolectric & Truth
+    testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.truth)
+    testImplementation(libs.kotlinx.coroutines.test)
+
     implementation(libs.androidx.lifecycle.viewmodel.compose.android)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
