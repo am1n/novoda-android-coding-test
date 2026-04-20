@@ -2,7 +2,10 @@ package com.novoda.test.ui
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import com.novoda.test.model.User
+import com.novoda.test.model.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,8 +13,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import javax.inject.Inject
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val repository: UserRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<MainScreenUiState>(MainScreenUiState.Loading)
     val uiState: StateFlow<MainScreenUiState> = _uiState.asStateFlow()
@@ -19,16 +26,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     suspend fun getUsers() {
         _uiState.value = MainScreenUiState.Loading
         try {
-            // TODO: get list of users from repository
-            val users = listOf(
-                User(
-                    id = 1,
-                    name = "Example User",
-                    reputation = 5,
-                    imageUrl = "https://www.gravatar.com/avatar/a007be5a61f6aa8f3e85ae2fc18dd66e?d=identicon&r=PG",
-                    followed = false
-                )
-            )
+            val users = repository.getUsers()
             _uiState.value = if (users.isEmpty())
                 MainScreenUiState.Empty
             else
